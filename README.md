@@ -1,6 +1,9 @@
+CampusCare
+
 Architectural Decision Records
 
 1. Target devices: Android
+
 2. CSS framework: Tailwind CSS
    Why: Tailwind CSS is highly adaptable and utility-first, allowing for rapid customization without requiring lengthy bespoke CSS. This streamlines development and ensures uniformity throughout your app. Its adaptability makes it ideal for projects with short deadlines and a requirement for responsive, modern UI.
 
