@@ -8,51 +8,49 @@ import {
   Alert,
   TouchableOpacity,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
+import axios from "axios";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [users, setUsers] = useState([{}]);
   const navigation = useNavigation();
 
-  const handleLogin = async () => {
-    console.log("Login button pressed!"); // 버튼 클릭 여부 확인용
+  const fetchUsers = async () => {
     try {
-      const response = await fetch(
-        "https://6758bdfa60576a194d11a492.mockapi.io/account",
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
+      let response = await axios.get(
+        "https://6758bdfa60576a194d11a492.mockapi.io/account"
       );
-
-      if (!response.ok) {
-        throw new Error(`Network response was not ok: ${response.status}`);
-      }
-
-      const data = await response.json();
-      console.log("Response data:", data);
-
-      if (data.length > 0) {
-        // 만약 데이터가 존재한다면
-        const user = data[1]; // 배열에서 첫 번째 사용자 정보
-        if (user.student) {
-          navigation.navigate("studentHome");
-        } else {
-          navigation.navigate("generalHome");
-        }
-      } else {
-        Alert.alert("Login Failed", "Invalid email or password.");
-      }
+      setUsers(response.data);
     } catch (error) {
       console.error("Error:", error);
       Alert.alert("Error", "Something went wrong. Please try again.");
     }
   };
 
+  const handleLogin = async () => {
+    console.log("Login button pressed!"); // 버튼 클릭 여부 확인용
+    console.log(users);
+    console.log(email, password);
+    for (let user in users) {
+      if (users[user].email == email && users[user].password == password) {
+        if (users[user].student) {
+          navigation.navigate("studentHome");
+        } else {
+          navigation.navigate("generalHome");
+        }
+      } else {
+        console.log("user mismatched");
+      }
+    }
+    Alert.alert("Login Failed", "Invalid email or password.");
+  };
+
+  useEffect(() => {
+    fetchUsers();
+  }, []);
   return (
     <View style={styles.container}>
       <Image
