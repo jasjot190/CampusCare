@@ -1,14 +1,17 @@
-import React, { Component } from "react";
-import { Text, View } from "react-native";
 import { Stack } from "expo-router";
-import "../global.css";
 
 const _layout = () => {
   return (
-    <Stack className="flex">
-      <Stack.Screen name="index" options={{ title: "Home" }} />
+    <Stack>
+      <Stack.Screen name="index" options={{ headerShown: false }} />
+      <Stack.Screen name="login" />
+      <Stack.Screen name="generalHome" options={{ headerShown: false }} />
+      <Stack.Screen name="studentHome" options={{ headerShown: false }} />
       <Stack.Screen name="splash" options={{ title: "Splash" }} />
-      <Stack.Screen name="login" options={{ title: "Sign In" }} />
+      <Stack.Screen
+        name="submitRequest"
+        options={{ title: "Request", headerShown: false }}
+      />
     </Stack>
   );
 };

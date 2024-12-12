@@ -5,16 +5,60 @@ import {
   View,
   TextInput,
   Pressable,
+  Alert,
+  TouchableOpacity,
 } from "react-native";
-import React from "react";
+import React, { useState } from "react";
+import { useNavigation } from "@react-navigation/native";
 
-export default function login() {
+export default function Login() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const navigation = useNavigation();
+
+  const handleLogin = async () => {
+    console.log("Login button pressed!"); // 버튼 클릭 여부 확인용
+    try {
+      const response = await fetch(
+        "https://6758bdfa60576a194d11a492.mockapi.io/account",
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`Network response was not ok: ${response.status}`);
+      }
+
+      const data = await response.json();
+      console.log("Response data:", data);
+
+      if (data.length > 0) {
+        // 만약 데이터가 존재한다면
+        const user = data[1]; // 배열에서 첫 번째 사용자 정보
+        if (user.student) {
+          navigation.navigate("studentHome");
+        } else {
+          navigation.navigate("generalHome");
+        }
+      } else {
+        Alert.alert("Login Failed", "Invalid email or password.");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      Alert.alert("Error", "Something went wrong. Please try again.");
+    }
+  };
+
   return (
     <View style={styles.container}>
       <Image
         style={{ resizeMode: "contain", width: 200, height: 170 }}
         source={require("../assets/logo.png")}
-      ></Image>
+      />
       <Text style={{ fontWeight: 600, fontSize: 24, marginBlock: 25 }}>
         Sign-In
       </Text>
@@ -33,16 +77,28 @@ export default function login() {
         }}
       >
         <Text style={{ fontWeight: 500, fontSize: 18 }}>Sait Email</Text>
-        <TextInput style={styles.inputBox} placeholder={"Value"}></TextInput>
+        <TextInput
+          style={styles.inputBox}
+          placeholder={"Enter email address"}
+          onChangeText={(text) => setEmail(text)}
+        />
 
         <Text style={{ fontWeight: 500, fontSize: 18 }}>Password</Text>
-        <TextInput style={styles.inputBox} placeholder={"Value"}></TextInput>
+        <TextInput
+          style={styles.inputBox}
+          placeholder={"password"}
+          onChangeText={(text) => setPassword(text)}
+        />
 
-        <Pressable style={styles.button}>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={handleLogin}
+          android_ripple={{ color: "#fff" }} // 버튼 클릭 효과
+        >
           <Text style={{ color: "white", padding: 4, fontWeight: 500 }}>
             Sign In
           </Text>
-        </Pressable>
+        </TouchableOpacity>
 
         <Pressable style={{}}>
           <Text>Forgot Password?</Text>
